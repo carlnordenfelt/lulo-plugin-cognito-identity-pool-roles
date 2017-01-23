@@ -72,9 +72,10 @@ describe('Index unit tests', function () {
 
     describe('create', function () {
         it('should succeed', function (done) {
-            subject.create(event, {}, function (error, _response) {
-                expect(error).to.equal(undefined);
+            subject.create(event, {}, function (error, response) {
+                expect(error).to.equal(null);
                 expect(setIdentityPoolRolesStub.calledOnce).to.equal(true);
+                expect(response.physicalResourceId).not.to.equal(undefined);
                 done();
             });
         });
@@ -93,7 +94,7 @@ describe('Index unit tests', function () {
         it('should succeed', function (done) {
             event.ResourceProperties.RoleMappings = [{}]; // Coverage
             subject.update(event, {}, function (error) {
-                expect(error).to.equal(undefined);
+                expect(error).to.equal(null);
                 expect(setIdentityPoolRolesStub.calledOnce).to.equal(true);
                 done();
             });
@@ -110,8 +111,9 @@ describe('Index unit tests', function () {
 
     describe('delete', function () {
         it('should succeed', function (done) {
+            event.PhysicalResourceId = 'eu-west-1:bef2c0b3-f3ce-4de0-aec1-8765trfvbh_1234567890';
             subject.delete(event, {}, function (error) {
-                expect(error).to.equal(undefined);
+                expect(error).to.equal(null);
                 setIdentityPoolRolesStub.calledWith({
                     IdentityPoolId: 'IdentityPoolId',
                     Roles: {},
@@ -123,9 +125,18 @@ describe('Index unit tests', function () {
         });
         it('should fail due to setIdentityPoolRolesError error', function (done) {
             setIdentityPoolRolesStub.yields('setIdentityPoolRolesError');
+            event.PhysicalResourceId = 'eu-west-1:bef2c0b3-f3ce-4de0-aec1-8765trfvbh_1234567890';
             subject.delete(event, {}, function (error) {
                 expect(error).to.equal('setIdentityPoolRolesError');
                 expect(setIdentityPoolRolesStub.calledOnce).to.equal(true);
+                done();
+            });
+        });
+        it('should succeed when calling delete with invalid id', function (done) {
+            event.PhysicalResourceId = 'InvalidId';
+            subject.delete(event, {}, function (error) {
+                expect(error).to.equal(null);
+                expect(setIdentityPoolRolesStub.called).to.equal(false);
                 done();
             });
         });

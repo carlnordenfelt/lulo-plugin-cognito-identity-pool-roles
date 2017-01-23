@@ -29,7 +29,13 @@ pub.create = function (event, _context, callback) {
         params.RoleMappings = roleMappings;
     }
     cognitoIdentity.setIdentityPoolRoles(params, function (error, _response) {
-        callback(error);
+        if (error) {
+            return callback(error);
+        }
+        var data = {
+            physicalResourceId: params.IdentityPoolId + '_' + Date.now()
+        };
+        callback(null, data);
     });
 };
 
@@ -38,6 +44,9 @@ pub.update = function (event, context, callback) {
 };
 
 pub.delete = function (event, context, callback) {
+    if (!/[\w-]+:[-0-9a-zA-Z]+_[0-9]+/.test(event.PhysicalResourceId)) {
+        return callback(null);
+    }
     event.ResourceProperties.Roles = {};
     event.ResourceProperties.RoleMappings = [];
     pub.create(event, context, callback);
