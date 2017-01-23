@@ -39,7 +39,7 @@ pub.update = function (event, context, callback) {
 
 pub.delete = function (event, context, callback) {
     event.ResourceProperties.Roles = {};
-    event.ResourceProperties.RoleMappings = [{}];
+    event.ResourceProperties.RoleMappings = [];
     pub.create(event, context, callback);
 };
 

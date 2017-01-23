@@ -91,7 +91,7 @@ describe('Index unit tests', function () {
 
     describe('update', function () {
         it('should succeed', function (done) {
-            event.PhysicalResourceId = 'IdentityPoolId';
+            event.ResourceProperties.RoleMappings = [{}]; // Coverage
             subject.update(event, {}, function (error) {
                 expect(error).to.equal(undefined);
                 expect(setIdentityPoolRolesStub.calledOnce).to.equal(true);
@@ -115,7 +115,7 @@ describe('Index unit tests', function () {
                 setIdentityPoolRolesStub.calledWith({
                     IdentityPoolId: 'IdentityPoolId',
                     Roles: {},
-                    RoleMappings: [{}]
+                    RoleMappings: {}
                 });
                 expect(setIdentityPoolRolesStub.calledOnce).to.equal(true);
                 done();
